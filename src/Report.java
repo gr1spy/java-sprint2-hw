@@ -40,8 +40,9 @@ public class Report {
         } else if (monthOrYear == 2){
             String fileName = "y.2021.csv";
             try {
-                String file = Files.readString(Path.of(fileName));
+                String file = Files.readString(Path.of(path + "\\\\" + fileName));
                     splitFile(file, monthOrYear, 0);
+                    System.out.println(file);
             } catch (IOException e) {
                 System.out.println("Невозможно прочитать файл с годовым отчётом. " +
                         "Возможно, файл отсутствует.");
