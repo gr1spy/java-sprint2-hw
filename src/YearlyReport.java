@@ -2,7 +2,7 @@ public class YearlyReport {
 
     short month; //месяц (число: 01, 02 ..)
     int amount; //сумма
-    boolean is_expense; //true - расход, false - доход
+    boolean is_expense; // false - доход, true - расход
 
     YearlyReport(
             short numMonth,

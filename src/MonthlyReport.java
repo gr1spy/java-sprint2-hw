@@ -1,5 +1,3 @@
-import java.util.HashMap;
-
 public class MonthlyReport {
 
     String item_name; //название товара
