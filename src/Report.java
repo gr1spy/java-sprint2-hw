@@ -2,45 +2,60 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 
+/**
+ * Класс Report содержит реализацию основных функциональных возможностей
+ * программы.
+ */
 public class Report {
 
-    /**
-     * allStringsOfFileMonth - список, содержащий все строки из одного файла меясчного отчета,
-     * allStringsOfFileYear - Список ХэшТаблиц, содержащий все строки из годового отчета
-     */
-    ArrayList<MonthlyReport> allStringsOfFileMonth = new ArrayList<>(); //список распарсенных строк одного меясчного отчета
-    ArrayList<YearlyReport> allStringsOfFileYear = new ArrayList<>(); //список распарсенных строк ежегодного отчета
-    ArrayList<Month> listOfMonths = new ArrayList<>();  //список распарсенных месячных отчетов
-    ArrayList<Year_to_Month> listOfMonthsInYear = new ArrayList<>();  //список распарсенных месячных отчетов в годовом отчете
+    /** "буфферизированный" список распарсенных строк одного меясчного отчета, когда не используется - пуст  */
+    ArrayList<MonthlyReport> allStringsOfFileMonth = new ArrayList<>();
+    /** "буфферизированный" список распарсенных строк ежегодного отчета, когда не используется - пуст */
+    ArrayList<YearlyReport> allStringsOfFileYear = new ArrayList<>();
+    /** список распарсенных месячных отчетов */
+    ArrayList<Month> listOfMonths = new ArrayList<>();
+    /** список распарсенных месячных отчетов в годовом отчете */
+    ArrayList<YearToMonth> listOfMonthsInYear = new ArrayList<>();
 
 
-    Month jan = new Month(allStringsOfFileMonth); //объект месячного отчета, содержащий все строки файла
+    /** объект месячного отчета, содержащий все распарсенные строки файла m.202101.csv */
+    Month jan = new Month(allStringsOfFileMonth);
+    /** объект месячного отчета, содержащий все распарсенные строки файла m.202102.csv */
     Month feb = new Month(allStringsOfFileMonth);
+    /** объект месячного отчета, содержащий все распарсенные строки файла m.202103.csv */
     Month mar = new Month(allStringsOfFileMonth);
 
-    Year_to_Month jan_2021 = new Year_to_Month(allStringsOfFileYear); //объект месяца в годовом отчете
-    Year_to_Month feb_2021 = new Year_to_Month(allStringsOfFileYear);
-    Year_to_Month mar_2021 = new Year_to_Month(allStringsOfFileYear);
+    /** объект распарсенного месяца в годовом отчете */
+    YearToMonth jan2021 = new YearToMonth(allStringsOfFileYear);
+    /** объект распарсенного месяца в годовом отчете */
+    YearToMonth feb2021 = new YearToMonth(allStringsOfFileYear);
+    /** объект распарсенного месяца в годовом отчете */
+    YearToMonth mar2021 = new YearToMonth(allStringsOfFileYear);
 
-    //Заполняем списки с отчетами пустыми значениями
+    /**
+     * @param monthOrYear передаем номер команды (1 - заполняем список объектов "месяц",
+     *                    2 - заполняем список объектов "месяц" в годовом отчете
+     */
     void pullReportList(int monthOrYear){
         if (monthOrYear == 1){
-            //наполняем список меясчных отчетов
             listOfMonths.add(jan);
             listOfMonths.add(feb);
             listOfMonths.add(mar);
         } else {
-            //Заполняем список месяцев в годовом отчете
-            listOfMonthsInYear.add(jan_2021);
-            listOfMonthsInYear.add(feb_2021);
-            listOfMonthsInYear.add(mar_2021);
+            listOfMonthsInYear.add(jan2021);
+            listOfMonthsInYear.add(feb2021);
+            listOfMonthsInYear.add(mar2021);
         }
     }
 
 
-    void read(int monthOrYear, String path) {     //Ввели месяц или год?
+    /**
+     * @param monthOrYear 1 - выполняем сканирование файлов меясччного отчета, 2 - сканирование файла годового отчета
+     * @param path путь до каталога с отчетами
+     * @return если не смогли прочитать хотя бы один из 4х файлов, то false -> завершение программы, иначе true
+     */
+    boolean read(int monthOrYear, String path) {     //Ввели месяц или год?
 
         if (monthOrYear == 1) {
             String fileName = "m.20210";
@@ -58,8 +73,9 @@ public class Report {
                     }
 
                 } catch (IOException e) {
-                    System.out.println("Невозможно прочитать файл с месячным отчётом. " +
+                    System.out.println("\nНевозможно прочитать файл " + (path + "\\\\" + fileName + i + ".csv") + " с месячным отчётом. " +
                             "Возможно, файл отсутствует.");
+                    return false;
                 }
             }
         } else if (monthOrYear == 2) {
@@ -69,16 +85,24 @@ public class Report {
                 String file = Files.readString(Path.of(path + "\\\\" + fileName));
                 splitFile(file, monthOrYear, 0);
             } catch (IOException e) {
-                System.out.println("Невозможно прочитать файл с годовым отчётом. " +
+                System.out.println("\nНевозможно прочитать файл "+ (path + "\\\\" + fileName) + " с годовым отчётом. " +
                         "Возможно, файл отсутствует.");
+                return false;
             }
         }
 
+        return true;
+
     }
 
+    /**
+     * @param file "отсканированный" файл отчета в виде строки
+     * @param monthYear 1 - парсим меясчный отчет, 2 - парсим годовой отчет
+     * @param numMonth номер месяца [1;3], если парсим месячный отчет (если парсим годовой, то не используем)
+     */
     void splitFile(String file, int monthYear, int numMonth) {
 
-        //Разделяем наш файл (в виде одной строки) на множество строк
+
         String[] lines = file.split(System.lineSeparator());
 
 
@@ -111,18 +135,21 @@ public class Report {
                 YearlyReport thisStringYear = new YearlyReport(month, sumOfMonth, isExpense);
 
                 if (thisStringYear.month == 1) {
-                    jan_2021.yearToMonth.add(thisStringYear);
+                    jan2021.yearToMonth.add(thisStringYear);
                 } else if (thisStringYear.month == 2) {
-                    feb_2021.yearToMonth.add(thisStringYear);
+                    feb2021.yearToMonth.add(thisStringYear);
                 } else if (thisStringYear.month == 3) {
-                    mar_2021.yearToMonth.add(thisStringYear);
+                    mar2021.yearToMonth.add(thisStringYear);
                 }
 
             }
         }
     }
 
-    void check() {   //сверяем отчеты
+    /**
+     * Сверяем отчеты
+     */
+    void check() {
         int[] expensesMonthsOfMonthRep = new int[3];  //массив расходов по трем месяцам из отчетов по меясцам
         int[] incommingsMonthsOfMonthRep = new int[3];    //массив доходов по трем месяцам из отчетов по месяцам
 
@@ -130,18 +157,15 @@ public class Report {
         int[] incommingsMonthsOfYearRep = new int[3];   //массив доходов по трем месяцам из годового отчета
 
         //Заполнение массивов трат и доходов из файлов месячных отчетов
-
         for (int i = 0; i < listOfMonths.size(); i++){
+
             int bufSumExp = 0;
             int bufSumInc = 0;
-            for (int j = 0; j < listOfMonths.get(j).month.size(); j++){
+            for (int j = 0; j < listOfMonths.get(i).month.size(); j++){
                 if (listOfMonths.get(i).month.get(j).is_expense){
                     bufSumExp += listOfMonths.get(i).month.get(j).sum_of_one * listOfMonths.get(i).month.get(j).quantity;
-                    bufSumInc += listOfMonths.get(i).month.get(j+1).sum_of_one * listOfMonths.get(i).month.get(j+1).quantity;
-                    break;
                 } else {
                     bufSumInc += listOfMonths.get(i).month.get(j).sum_of_one * listOfMonths.get(i).month.get(j).quantity;
-                    bufSumExp += listOfMonths.get(i).month.get(j+1).sum_of_one * listOfMonths.get(i).month.get(j+1).quantity;
                 }
             }
             expensesMonthsOfMonthRep[i]=bufSumExp;
@@ -164,6 +188,7 @@ public class Report {
             incommingsMonthsOfYearRep[i] = bufSumInc;
         }
 
+        boolean allIsOk = true;
         //Сверяем массивы
         for (int i = 0; i < 3; i++) {
 
@@ -171,19 +196,27 @@ public class Report {
 
                 System.out.println("Внимание! Данные в отчетах не сходятся. Обнаружено несоответствие в расходах в " +
                         (i+1) + " месяце!");
-            } else if (!(incommingsMonthsOfMonthRep[i] == incommingsMonthsOfYearRep[i])){
+                allIsOk = false;
+            }
+
+            if (!(incommingsMonthsOfMonthRep[i] == incommingsMonthsOfYearRep[i])){
 
                 System.out.println("Внимание! Данные в отчетах не сходятся. Обнаружено несоответствие в доходах в " +
                         (i+1) + " месяце!");
-            } else {
-                System.out.println("\nВсе успешно, данные подтверждены!)");
+                allIsOk = false;
             }
+        }
+
+        if (allIsOk){
+            System.out.println("\nВсе успешно, данные подтверждены!)");
         }
 
     }
 
 
-    //Печатаем месячные отчеты
+    /**
+     * Печатаем месячные отчеты
+     */
     void printMonthReport() {
 
         for (int i = 0; i < listOfMonths.size(); i++) {    //номер месяца в списке month
@@ -207,7 +240,10 @@ public class Report {
     }
 
 
-    //Ищем самый прибыльный товар за месяц и сумму прибыли с него
+    /**
+     * Ищем самый прибыльный товар за месяц и сумму прибыли с него
+     * @param numMonth [0, 2] - номер месяца
+     */
     void mostOfIncomeItem(int numMonth) {
 
         int maxSum = 0;     //Прибыль c самого прибыльного товара
@@ -227,7 +263,10 @@ public class Report {
 
     }
 
-    //Ищем самую большую трату за месяц
+    /**
+     * Ищем самую большую трату за месяц
+     * @param numMonth [0, 2] - номер месяца
+     */
     void mostOfExpense(int numMonth) {
 
         int maxExpenses = 0;    //Самая большая трата
@@ -246,7 +285,9 @@ public class Report {
         System.out.println("Самый дорогой товар: " + itemName + "; Потратили -" + maxExpenses + ".\n");
     }
 
-    //Печатаем годовой отчет
+    /**
+     * Печатаем годовой отчет
+     */
     void printYearReport() {
 
         System.out.println("\nШёл 2021 год...");
@@ -254,13 +295,16 @@ public class Report {
         middleExpenseAndIncome();
     }
 
+    /**
+     * Высчитываем прибыль по каждому месяцу
+     */
     void profit() {
 
         int count = 0; //счетчик месяцев, нужен для печати
         int inCome = 0; //итоговая сумма прибыли за месяц
         int flag = 0; //флаг того, что мы уже посчитали доход/расход в этом месяце
 
-        for (Year_to_Month toMonth : listOfMonthsInYear){
+        for (YearToMonth toMonth : listOfMonthsInYear){
             count++;
             for (int i = 0; i < listOfMonthsInYear.get(i).yearToMonth.size(); i++){
                 if (toMonth.yearToMonth.get(i).is_expense && (i==0) && (flag == 0)){  //если строка = доход, то ..
@@ -280,7 +324,9 @@ public class Report {
     }
 
 
-    //Средний расход за все месяцы в году
+    /**
+     * Средний расход за все месяцы в году
+     */
     void middleExpenseAndIncome() {
 
         double midExpenses;
@@ -289,13 +335,13 @@ public class Report {
         int allIncome = 0;
 
         //Делаем обход по всем месяцам в годовом отчете и по всем строкам в этих месяцах
-        for (Year_to_Month year_to_month : listOfMonthsInYear) {    // проход по месяцам
+        for (YearToMonth monthInYear : listOfMonthsInYear) {    // проход по месяцам
 
-            for (int i = 0; i < year_to_month.yearToMonth.size(); i++){ //проход по строкам в месяце
-                if (year_to_month.yearToMonth.get(i).is_expense){  //если строка = доход, то ..
-                    allExpenses += year_to_month.yearToMonth.get(i).amount;
+            for (int i = 0; i < monthInYear.yearToMonth.size(); i++){ //проход по строкам в месяце
+                if (monthInYear.yearToMonth.get(i).is_expense){  //если строка = доход, то ..
+                    allExpenses += monthInYear.yearToMonth.get(i).amount;
                 } else {
-                    allIncome += year_to_month.yearToMonth.get(i).amount;
+                    allIncome += monthInYear.yearToMonth.get(i).amount;
                 }
 
             }

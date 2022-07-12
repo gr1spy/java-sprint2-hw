@@ -1,9 +1,17 @@
+/**
+ * Класс хранит распарсенные объекты обной строки годового отчета
+ */
 public class YearlyReport {
 
-    short month; //месяц (число: 01, 02 ..)
-    int amount; //сумма
-    boolean is_expense; // false - доход, true - расход
+    short month; //
+    int amount;
+    boolean is_expense;
 
+    /**
+     * @param numMonth месяц (число: 01, 02 ..)
+     * @param amountSum сумма
+     * @param isExpense false - доход, true - расход
+     */
     YearlyReport(
             short numMonth,
             int amountSum,

@@ -1,19 +1,22 @@
 import java.util.Scanner;
-
+/**
+ * Основной класс работы программы
+ */
 public class Main {
 
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
         Report report = new Report();
-        boolean flagReadMonthReport = false;
-        boolean flagReadYearReport = false;
 
         System.out.println("Введите путь к каталогу с отчетами. Пример: C:\\\\Java_prog\\\\java-sprint2-hw\\\\otchet");
         String path = scanner.nextLine();
 
-        report.pullReportList(1);
+        report.pullReportList(1); //создание шаблонов объектов "месяц" в отчетах
         report.pullReportList(2);
+
+        boolean completeReadMonthReport = false; //месячные отчеты успешно считались?
+        boolean completeReadYearReport = false;
 
         while (true){
 
@@ -22,38 +25,41 @@ public class Main {
 
             if (command == 1) { //1. Считать все месячные отчёты
 
-                if (!flagReadMonthReport){
-                    report.read(command, path);
+                if (!completeReadMonthReport){
+                    completeReadMonthReport = report.read(command, path);
+                    if(!completeReadMonthReport){
+                        break; //если считывание файлов месячных отчетов неуспешно
+                    }
                 } else {
                     System.out.println("Повторное считывание отчета невозможно!\nПерезапустите программу.");
                 }
-                flagReadMonthReport = true;
 
             } else if (command == 2 ) { //2. Считать годовой отчёт
 
-                if (!flagReadYearReport){
-                    report.read(command, path);
+                if (!completeReadYearReport){
+                    completeReadYearReport = report.read(command, path);
+                    if(!completeReadYearReport){
+                        break; //если считывание файла годового отчета неуспешно
+                    }
                 } else {
                     System.out.println("Повторное считывание отчета невозможно!\nПерезапустите программу.");
                 }
 
-                flagReadYearReport = true;
-
             } else if (command == 3 ) { //3. Сверить отчёты
-                if (flagReadMonthReport && flagReadYearReport){
+                if (completeReadMonthReport && completeReadYearReport){
                     report.check();
                 } else {
                     System.out.println("\nВнимание! Перед сверкой просканьте все отчеты!");
                 }
             } else if (command == 4 ) { //4. Вывести информацию о всех месячных отчётах
-                if(flagReadMonthReport) {
+                if(completeReadMonthReport) {
                     report.printMonthReport();
                 } else {
                     System.out.println("\nВы не передали данные месячных отчетов!\n + " +
                             "Перейдите в пункт меню #1");
                 }
             } else if (command == 5) { //5. Вывести информацию о годовом отчёте
-                if(flagReadYearReport) {
+                if(completeReadYearReport) {
                     report.printYearReport();
                 } else {
                     System.out.println("\nВы не передали данные годового отчета!\n + " +
@@ -72,6 +78,9 @@ public class Main {
 
     }
 
+    /**
+     * Выводит меню программы
+     */
     public static void printMenu(){
         System.out.println("\nЧто вы хотите сделать?\n" +
                 "1. Считать все месячные отчёты\n" +

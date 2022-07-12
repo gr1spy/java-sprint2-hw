@@ -1,10 +1,19 @@
+/**
+ * Класс хранит распарсенные объекты обной строки месячного отчета
+ */
 public class MonthlyReport {
 
-    String item_name; //название товара
-    boolean is_expense; //одно из двух значений:TRUE или FALSE. Обозначает, является ли запись тратой (TRUE) или доходом (FALSE)
-    int quantity; //количество закупленного или проданного товара
-    int sum_of_one; //стоимость одной единицы товара. Целое число
+    String item_name;
+    boolean is_expense;
+    int quantity;
+    int sum_of_one;
 
+    /**
+     * @param itemName название товара
+     * @param isExpense одно из двух значений:TRUE или FALSE. Обозначает, является ли запись тратой (TRUE) или доходом (FALSE)
+     * @param countItem количество закупленного или проданного товара
+     * @param sumOfOne стоимость одной единицы товара. Целое число
+     */
     MonthlyReport(
             String itemName,
             boolean isExpense,
