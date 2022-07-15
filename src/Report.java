@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Класс Report содержит реализацию основных функциональных возможностей
@@ -9,14 +10,14 @@ import java.util.ArrayList;
  */
 public class Report {
 
-    /** "буфферизированный" список распарсенных строк одного меясчного отчета, когда не используется - пуст  */
+    /** "буферезированный" список распарсенных строк одного меясчного отчета, когда не используется - пуст  */
     ArrayList<MonthlyReport> allStringsOfFileMonth = new ArrayList<>();
-    /** "буфферизированный" список распарсенных строк ежегодного отчета, когда не используется - пуст */
+    /** "буферезированный" список распарсенных строк ежегодного отчета, когда не используется - пуст */
     ArrayList<YearlyReport> allStringsOfFileYear = new ArrayList<>();
     /** список распарсенных месячных отчетов */
-    ArrayList<Month> listOfMonths = new ArrayList<>();
+    List<Month> listOfMonths = new ArrayList<>();
     /** список распарсенных месячных отчетов в годовом отчете */
-    ArrayList<YearToMonth> listOfMonthsInYear = new ArrayList<>();
+    List<YearToMonth> listOfMonthsInYear = new ArrayList<>();
 
 
     /** объект месячного отчета, содержащий все распарсенные строки файла m.202101.csv */
@@ -52,17 +53,16 @@ public class Report {
 
     /**
      * @param monthOrYear 1 - выполняем сканирование файлов меясччного отчета, 2 - сканирование файла годового отчета
-     * @param path путь до каталога с отчетами
      * @return если не смогли прочитать хотя бы один из 4х файлов, то false -> завершение программы, иначе true
      */
-    boolean read(int monthOrYear, String path) {     //Ввели месяц или год?
+    boolean read(int monthOrYear) {     //Ввели месяц или год?
 
         if (monthOrYear == 1) {
-            String fileName = "m.20210";
+
             for (int i = 1; i < 4; i++) {
                 int numMonth = i - 1;
                 try {
-                    String file = Files.readString(Path.of((path + "\\\\" + fileName + i + ".csv")));
+                    String file = Files.readString(Path.of("resources/m.20210" + i + ".csv"));
 
                     if (i == 1) {
                         splitFile(file, monthOrYear, numMonth);
@@ -73,7 +73,7 @@ public class Report {
                     }
 
                 } catch (IOException e) {
-                    System.out.println("\nНевозможно прочитать файл " + (path + "\\\\" + fileName + i + ".csv") + " с месячным отчётом. " +
+                    System.out.println("\nНевозможно прочитать файл " + ("resources/m.20210" + i + ".csv") + " с месячным отчётом. " +
                             "Возможно, файл отсутствует.");
                     return false;
                 }
@@ -82,10 +82,10 @@ public class Report {
             String fileName = "y.2021.csv";
 
             try {
-                String file = Files.readString(Path.of(path + "\\\\" + fileName));
+                String file = Files.readString(Path.of("resources/y.2021.csv"));
                 splitFile(file, monthOrYear, 0);
             } catch (IOException e) {
-                System.out.println("\nНевозможно прочитать файл "+ (path + "\\\\" + fileName) + " с годовым отчётом. " +
+                System.out.println("\nНевозможно прочитать файл "+ (fileName) + " с годовым отчётом. " +
                         "Возможно, файл отсутствует.");
                 return false;
             }

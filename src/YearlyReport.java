@@ -3,9 +3,9 @@
  */
 public class YearlyReport {
 
-    short month; //
-    int amount;
-    boolean is_expense;
+    final short month; //
+    final int amount;
+    final boolean is_expense;
 
     /**
      * @param numMonth месяц (число: 01, 02 ..)

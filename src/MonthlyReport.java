@@ -3,10 +3,10 @@
  */
 public class MonthlyReport {
 
-    String item_name;
-    boolean is_expense;
-    int quantity;
-    int sum_of_one;
+    final String item_name;
+    final boolean is_expense;
+    final int quantity;
+    final int sum_of_one;
 
     /**
      * @param itemName название товара

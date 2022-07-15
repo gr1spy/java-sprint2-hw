@@ -9,9 +9,6 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         Report report = new Report();
 
-        System.out.println("Введите путь к каталогу с отчетами. Пример: C:\\\\Java_prog\\\\java-sprint2-hw\\\\otchet");
-        String path = scanner.nextLine();
-
         report.pullReportList(1); //создание шаблонов объектов "месяц" в отчетах
         report.pullReportList(2);
 
@@ -26,7 +23,7 @@ public class Main {
             if (command == 1) { //1. Считать все месячные отчёты
 
                 if (!completeReadMonthReport){
-                    completeReadMonthReport = report.read(command, path);
+                    completeReadMonthReport = report.read(command);
                     if(!completeReadMonthReport){
                         break; //если считывание файлов месячных отчетов неуспешно
                     }
@@ -37,7 +34,7 @@ public class Main {
             } else if (command == 2 ) { //2. Считать годовой отчёт
 
                 if (!completeReadYearReport){
-                    completeReadYearReport = report.read(command, path);
+                    completeReadYearReport = report.read(command);
                     if(!completeReadYearReport){
                         break; //если считывание файла годового отчета неуспешно
                     }
